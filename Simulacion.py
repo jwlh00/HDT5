@@ -1,7 +1,7 @@
 import simpy
 import random
 
-def CPU(nombre,env,cantidad_RAM,cantidad_Instrucciones,RAM,capacidad_instrucciones,cpu,tiempo_espera):
+def CPU(nombre,env,cantidad_RAM,cantidad_Instrucciones,RAM,cpu,tiempo_espera):
     global totalTiempo  
     yield env.timeout(tiempo_espera)
     corre=True
@@ -15,7 +15,7 @@ def CPU(nombre,env,cantidad_RAM,cantidad_Instrucciones,RAM,capacidad_instruccion
           print('%s entro al CPU en %d'%(nombre,horaLlegada))
           yield turno
           yield env.timeout(1)
-          cantidad_Instrucciones = cantidad_Instrucciones -3
+          cantidad_Instrucciones = cantidad_Instrucciones -3 #Cambiar numero a cantidad de instrucciones deseadas
           ficha=random.randint(1,2)
 
           if(ficha==1):
@@ -40,19 +40,17 @@ def CPU(nombre,env,cantidad_RAM,cantidad_Instrucciones,RAM,capacidad_instruccion
 
 env = simpy.Environment() #ambiente de simulación
 RAM = simpy.Container(env, init=100, capacity=100)
-capacidad_instrucciones = simpy.Resource(env,capacity = 3)
-cpu = simpy.Resource(env,capacity = 1)
+cpu = simpy.Resource(env,capacity = 1) #Cambiar capacidad para elejir cuantos procesadores quiere
 random.seed(10) # fijar el inicio de random
 
 totalTiempo = 0
-for i in range(25):
+for i in range(25): #Cambiar el rango a cantidad de procesos
     cantidad_RAM = random.randint(1,10)
     cantidad_Instrucciones = random.randint(1,10)
-    env.process(CPU('Proceso %d'%(i+1),env,cantidad_RAM,cantidad_Instrucciones,RAM,capacidad_instrucciones,cpu,random.expovariate(1.0/10)))
+    env.process(CPU('Proceso %d'%(i+1),env,cantidad_RAM,cantidad_Instrucciones,RAM,cpu,random.expovariate(1.0/10)))
 
 env.run()
-#env.run(until=50)  #correr la simulación hasta el tiempo = 50
 
 print("")
-print(totalTiempo, "Tiempo total")
-print ("Tiempo promedio por proceso es: ", totalTiempo/25.0)
+print("Tiempo total transcurrido: ", totalTiempo)
+print ("Tiempo promedio por proceso es: ", totalTiempo/25.0) #Cambiar el numero por la cantidad de procesos
